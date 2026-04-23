@@ -1,0 +1,107 @@
+--DOCTOR TABLE
+CREATE TABLE doctor (
+    docid INT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    address VARCHAR(255) NOT NULL,
+    phoneno BIGINT
+);
+
+INSERT INTO doctor (docid, name, address, phoneno) VALUES
+(1, 'Dr. John Doe', '123 Main St, Cityville', 1234567890),
+(2, 'Dr. Jane Smith', '456 Maple Ave, Cityville', 9876543210);
+
+
+-- DONOR TABLE (notice: table name sometimes appears as donor9 / donar9 - most probably typo)
+CREATE TABLE donor (
+    donid INT PRIMARY KEY,
+    donname VARCHAR(255) NOT NULL,
+    donphone BIGINT,
+    gender VARCHAR(10),
+    address VARCHAR(255),
+    weight DECIMAL(5,2),
+    blood_pressure VARCHAR(20),
+    docid INT,
+    FOREIGN KEY (docid) REFERENCES doctor(docid)
+);
+
+INSERT INTO donor (donid, donname, donphone, gender, address, weight, blood_pressure, docid) VALUES
+(1, 'Alice Smith', 11122334455, 'Female', '101 Pine St, Cityville', 60.5, '120/80', 1),
+(2, 'Bob Johnson', 22233445566, 'Male', '202 Oak St, Cityville', 75.2, '130/85', 2);
+
+
+-- BLOOD BANK TABLE
+CREATE TABLE blood_bank (
+    blood_bank_id INT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    address VARCHAR(255) NOT NULL
+);
+
+INSERT INTO blood_bank (blood_bank_id, name, address) VALUES
+(1, 'City Blood Bank', '101 Blood Drive Ave, Cityville'),
+(2, 'West Side Blood Bank', '202 Blood Ave, Westville');
+
+
+-- BLOOD TABLE (stores available blood units)
+CREATE TABLE blood (
+    donor_id INT,
+    blood_bank_id INT,
+    blood_type VARCHAR(10) NOT NULL,
+    PRIMARY KEY (donor_id, blood_bank_id),
+    FOREIGN KEY (donor_id) REFERENCES donor(donid),
+    FOREIGN KEY (blood_bank_id) REFERENCES blood_bank(blood_bank_id)
+);
+
+INSERT INTO blood (donor_id, blood_bank_id, blood_type) VALUES
+(1, 1, 'O+'),
+(2, 2, 'A-');
+
+
+-- PATIENT TABLE
+CREATE TABLE patient (
+    patient_id INT PRIMARY KEY,
+    patient_name VARCHAR(255) NOT NULL,
+    phone BIGINT,
+    h_address VARCHAR(255) NOT NULL,
+    p_address VARCHAR(255) NOT NULL
+);
+
+INSERT INTO patient (patient_id, patient_name, phone, h_address, p_address) VALUES
+(1, 'Jane Doe', 9876543210, '456 Elm St, Cityville', '789 Oak St, Cityville'),
+(2, 'Mark Brown', 1122334455, '123 Pine St, Cityville', '321 Maple St, Cityville');
+
+
+-- BLOOD DELIVERY TABLE (relationship between blood bank & patient)
+CREATE TABLE blood_delivery (
+    blood_bank_id INT,
+    patient_id INT,
+    PRIMARY KEY (blood_bank_id, patient_id),
+    FOREIGN KEY (blood_bank_id) REFERENCES blood_bank(blood_bank_id),
+    FOREIGN KEY (patient_id) REFERENCES patient(patient_id)
+);
+
+INSERT INTO blood_delivery (blood_bank_id, patient_id) VALUES
+(1, 1),
+(2, 2);
+
+
+-- Some SELECT queries that appear in the code
+SELECT * FROM doctor;
+SELECT * FROM donor;
+SELECT * FROM blood_bank;
+SELECT * FROM blood;
+SELECT * FROM patient;
+SELECT * FROM blood_delivery;
+
+
+-- Example reporting query (appears incomplete/broken in images)
+SELECT bb.name AS blood_bank_name, b.blood_type, COUNT(*) AS available_bags
+FROM blood b
+JOIN blood_bank bb ON b.blood_bank_id = bb.blood_bank_id
+WHERE b.blood_type = 'O+'
+AND b.blood_bank_id = 1
+GROUP BY b.blood_type, bb.name;
+
+
+CREATE USER 'faculty_user'@'localhost' IDENTIFIED BY '123';
+GRANT SELECT, INSERT ON donor TO 'faculty_user'@'localhost';
+REVOKE INSERT ON donor FROM 'faculty_user'@'localhost';
