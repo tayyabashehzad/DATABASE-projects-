@@ -1,0 +1,221 @@
+CREATE TABLE patient (
+    email VARCHAR(100) PRIMARY KEY,
+    password VARCHAR(100) NOT NULL,
+    name VARCHAR(100),
+    address TEXT,
+    gender VARCHAR(10)
+);
+CREATE TABLE doctor (
+    email VARCHAR(100) PRIMARY KEY,
+    password VARCHAR(100) NOT NULL,
+    name VARCHAR(100),
+    gender VARCHAR(10)
+);
+CREATE TABLE medical_history (
+    id SERIAL PRIMARY KEY,
+    date DATE,
+    conditions TEXT,
+    surgeries TEXT,
+    medication TEXT
+);
+CREATE TABLE appointment (
+    id SERIAL PRIMARY KEY,
+    date DATE,
+    start_time TIME,
+    end_time TIME,
+    status VARCHAR(20)
+);
+CREATE TABLE schedule (
+    id SERIAL PRIMARY KEY,
+    day VARCHAR(15),
+    start_time TIME,
+    end_time TIME,
+    break_time TIME
+);
+CREATE TABLE patient_attend_appointment (
+    patient_email VARCHAR(100),
+    appointment_id INT,
+    concerns TEXT,
+    symptoms TEXT,
+    PRIMARY KEY (patient_email, appointment_id),
+    FOREIGN KEY (patient_email) REFERENCES patient(email),
+    FOREIGN KEY (appointment_id) REFERENCES appointment(id)
+);
+CREATE TABLE patient_fill_history (
+    patient_email VARCHAR(100),
+    history_id INT,
+    PRIMARY KEY (patient_email, history_id),
+    FOREIGN KEY (patient_email) REFERENCES patient(email),
+    FOREIGN KEY (history_id) REFERENCES medical_history(id)
+);
+CREATE TABLE diagnose (
+    appointment_id INT,
+    doctor_email VARCHAR(100),
+    diagnosis TEXT,
+    prescription TEXT,
+    PRIMARY KEY (appointment_id, doctor_email),
+    FOREIGN KEY (appointment_id) REFERENCES appointment(id),
+    FOREIGN KEY (doctor_email) REFERENCES doctor(email)
+);
+CREATE TABLE doctor_schedule (
+    schedule_id INT,
+    doctor_email VARCHAR(100),
+    PRIMARY KEY (schedule_id, doctor_email),
+    FOREIGN KEY (schedule_id) REFERENCES schedule(id),
+    FOREIGN KEY (doctor_email) REFERENCES doctor(email)
+);
+CREATE TABLE doctor_view_history (
+    history_id INT,
+    doctor_email VARCHAR(100),
+    PRIMARY KEY (history_id, doctor_email),
+    FOREIGN KEY (history_id) REFERENCES medical_history(id),
+    FOREIGN KEY (doctor_email) REFERENCES doctor(email)
+);
+INSERT INTO patient (email, password, name, address, gender)
+VALUES (
+  'ali@gmail.com',
+  'ali123',
+  'Ali Khan',
+  'Lahore',
+  'Male'
+);
+INSERT INTO doctor (email, password, name, gender)
+VALUES (
+  'dr.sara@gmail.com',
+  'doc123',
+  'Dr Sara Ahmed',
+  'Female'
+);
+INSERT INTO schedule (day, start_time, end_time, break_time)
+VALUES ('Monday', '09:00', '17:00', '13:00');
+INSERT INTO doctor_schedule (schedule_id, doctor_email)
+VALUES (1, 'dr.sara@gmail.com');
+INSERT INTO appointment (date, start_time, end_time, status)
+VALUES ('2026-01-15', '10:00', '10:30', 'Booked');
+INSERT INTO patient_attend_appointment
+(patient_email, appointment_id, concerns, symptoms)
+VALUES (
+  'ali@gmail.com',
+  1,
+  'Chest pain',
+  'Shortness of breath'
+);
+INSERT INTO diagnose
+(appointment_id, doctor_email, diagnosis, prescription)
+VALUES (
+  1,
+  'dr.sara@gmail.com',
+  'Mild anxiety',
+  'Rest and breathing exercises'
+);
+INSERT INTO medical_history (date, conditions, surgeries, medication)
+VALUES (
+  '2026-01-15',
+  'Anxiety',
+  'None',
+  'Breathing therapy'
+);
+INSERT INTO patient_fill_history (patient_email, history_id)
+VALUES (
+  'ali@gmail.com',
+  1
+);
+
+SELECT
+  p.name AS patient_name,
+  d.name AS doctor_name,
+  a.date,
+  dg.diagnosis,
+  dg.prescription
+FROM patient p
+JOIN patient_attend_appointment pa ON p.email = pa.patient_email
+JOIN appointment a ON pa.appointment_id = a.id
+JOIN diagnose dg ON a.id = dg.appointment_id
+JOIN doctor d ON dg.doctor_email = d.email;
+
+SELECT *
+FROM appointment a
+JOIN diagnose d ON a.id = d.appointment_id
+WHERE d.doctor_email = 'dr.sara@gmail.com'
+AND a.date = '2026-01-15'
+AND (
+    '10:15' < a.end_time
+    AND '10:45' > a.start_time
+);
+
+INSERT INTO appointment (date, start_time, end_time, status)
+VALUES ('2026-01-15', '10:15', '10:45', 'Booked');
+
+INSERT INTO diagnose
+(appointment_id, doctor_email, diagnosis, prescription)
+VALUES (2, 'dr.sara@gmail.com', 'Test', 'Test');
+
+CREATE OR REPLACE FUNCTION check_appointment_clash(
+    doc_email VARCHAR,
+    app_date DATE,
+    start_t TIME,
+    end_t TIME
+)
+RETURNS BOOLEAN AS $$
+BEGIN
+    IF EXISTS (
+        SELECT 1
+        FROM appointment a
+        JOIN diagnose d ON a.id = d.appointment_id
+        WHERE d.doctor_email = doc_email
+        AND a.date = app_date
+        AND start_t < a.end_time
+        AND end_t > a.start_time
+    ) THEN
+        RETURN TRUE;
+    END IF;
+
+    RETURN FALSE;
+END;
+$$ LANGUAGE plpgsql;
+
+SELECT check_appointment_clash(
+  'dr.sara@gmail.com',
+  '2026-01-15',
+  '10:15',
+  '10:45'
+);
+
+INSERT INTO patient (email, password, name, address, gender)
+VALUES ('zara@gmail.com', 'zara123', 'Zara Ali', 'Karachi', 'Female');
+
+SELECT * FROM patient;
+
+SELECT
+  p.name AS patient_name,
+  d.name AS doctor_name,
+  a.date,
+  a.start_time,
+  a.end_time,
+  a.status
+FROM patient p
+JOIN patient_attend_appointment pa ON p.email = pa.patient_email
+JOIN appointment a ON pa.appointment_id = a.id
+JOIN diagnose dg ON a.id = dg.appointment_id
+JOIN doctor d ON dg.doctor_email = d.email;
+
+UPDATE appointment
+SET status = 'Completed'
+WHERE id = 1;
+
+DELETE FROM diagnose
+WHERE appointment_id = 2;
+
+DELETE FROM patient_attend_appointment
+WHERE appointment_id = 2;
+
+DELETE FROM appointment
+WHERE id = 2;
+
+SELECT * FROM patient;
+SELECT * FROM doctor;
+SELECT * FROM diagnose;
+
+SELECT column_name, data_type
+FROM information_schema.columns
+WHERE table_name = 'doctor';

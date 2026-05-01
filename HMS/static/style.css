@@ -1,0 +1,17 @@
+body { font-family: 'Segoe UI', sans-serif; background: #f0f2f5; margin:0; padding:0; }
+.navbar { background:#1a237e; color:white; display:flex; justify-content:space-between; padding:15px; }
+.navbar a { color:white; text-decoration:none; margin-left:15px; }
+.navbar a:hover { text-decoration:underline; }
+.container { background:white; margin:30px auto; padding:30px; border-radius:10px; box-shadow:0 5px 15px rgba(0,0,0,0.2); width:90%; max-width:800px; }
+h2 { color:#1a237e; margin-bottom:20px; }
+input, select, textarea { width:100%; padding:10px; margin-bottom:15px; border-radius:5px; border:1px solid #ccc; }
+button { padding:12px; width:100%; border:none; border-radius:5px; background:#1a237e; color:white; cursor:pointer; font-size:16px; }
+button:hover { background:#283593; }
+table { width:100%; border-collapse:collapse; margin-top:15px; }
+table, th, td { border:1px solid #ccc; }
+th, td { padding:10px; text-align:center; }
+.user-type { display:flex; margin-bottom:15px; }
+.user-type div { flex:1; text-align:center; padding:10px; border:1px solid #ccc; cursor:pointer; border-radius:5px; }
+.user-type .selected { border-color:#1a237e; background:#f0f5ff; }
+.btn { display:inline-block; margin:10px 5px; padding:10px 15px; border-radius:5px; background:#1a237e; color:white; text-decoration:none; }
+.btn:hover { background:#283593; }

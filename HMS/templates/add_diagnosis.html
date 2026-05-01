@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Add Diagnosis</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+<div class="navbar">
+    <div><strong>Hospital Management System</strong></div>
+    <div>
+        <a href="/doctor-dashboard">Dashboard</a>
+        <a href="/logout">Logout</a>
+    </div>
+</div>
+
+<div class="container">
+    <h2>Add Diagnosis for {{ appointment[4] }}</h2>
+    <p>Date: {{ appointment[1] }} | Time: {{ appointment[2] }} - {{ appointment[3] }}</p>
+    <form method="POST">
+        <label>Diagnosis</label>
+        <textarea name="diagnosis" required></textarea>
+        <label>Prescription</label>
+        <textarea name="prescription" required></textarea>
+        <button type="submit">Save</button>
+    </form>
+</div>
+</body>
+</html>

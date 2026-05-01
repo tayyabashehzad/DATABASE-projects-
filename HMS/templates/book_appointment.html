@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Book Appointment</title>
+<link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+<div class="navbar">
+    <div><strong>Hospital Management System</strong></div>
+    <div>
+        <a href="/patient-dashboard">Dashboard</a>
+        <a href="/logout">Logout</a>
+    </div>
+</div>
+
+<div class="container">
+    <h2>Book Appointment</h2>
+    <form method="POST">
+        <label>Select Doctor</label>
+        <select name="doctor_email" required>
+            {% for d in doctors %}
+            <option value="{{ d[0] }}">{{ d[1] }}</option>
+            {% endfor %}
+        </select>
+
+        <label>Date</label>
+        <input type="date" name="date" required>
+
+        <label>Start Time</label>
+        <input type="time" name="start_time" required>
+
+        <label>End Time</label>
+        <input type="time" name="end_time" required>
+
+        <label>Concerns</label>
+        <textarea name="concerns" placeholder="Describe your symptoms or concerns"></textarea>
+
+        <button type="submit">Book Appointment</button>
+    </form>
+</div>
+</body>
+</html>

@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Patient Dashboard</title>
+<link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+<div class="navbar">
+    <div><strong>Hospital Management System</strong></div>
+    <div>
+        <a href="/">Home</a>
+        <a href="/book-appointment">Book Appointment</a>
+        <a href="/logout">Logout</a>
+    </div>
+</div>
+
+<div class="container">
+    <h2>Your Appointments</h2>
+    {% if appointments %}
+    <table>
+        <tr>
+            <th>Date</th>
+            <th>Time</th>
+            <th>Doctor</th>
+            <th>Status</th>
+            <th>Diagnosis</th>
+            <th>Prescription</th>
+        </tr>
+        {% for a in appointments %}
+        <tr>
+            <td>{{ a[1] }}</td>
+            <td>{{ a[2] }} - {{ a[3] }}</td>
+            <td>{{ a[5] or '-' }}</td>
+            <td>{{ a[4] }}</td>
+            <td>{{ a[6] or '-' }}</td>
+            <td>{{ a[7] or '-' }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+    {% else %}
+    <p>No appointments booked yet.</p>
+    {% endif %}
+</div>
+</body>
+</html>

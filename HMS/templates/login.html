@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Login - MediCare</title>
+<link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+<div class="container">
+    <h2>Hospital Management Login</h2>
+    <form method="POST">
+        <div class="user-type">
+            <div id="patient" class="selected" onclick="selectType('patient')">Patient</div>
+            <div id="doctor" onclick="selectType('doctor')">Doctor</div>
+        </div>
+        <input type="hidden" name="user_type" id="user_type" value="patient">
+
+        <label>Email</label>
+        <input type="email" name="email" required placeholder="Enter email">
+
+        <label>Password</label>
+        <input type="password" name="password" required placeholder="Enter password">
+
+        <button type="submit">Login</button>
+    </form>
+</div>
+
+<script>
+function selectType(type){
+    document.getElementById('user_type').value = type;
+    ['patient','doctor'].forEach(t=>document.getElementById(t).classList.remove('selected'));
+    document.getElementById(type).classList.add('selected');
+}
+</script>
+</body>
+</html>

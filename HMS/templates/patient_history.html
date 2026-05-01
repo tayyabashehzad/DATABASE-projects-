@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Patient History</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+<div class="navbar">
+    <div><strong>Hospital Management System</strong></div>
+    <div>
+        <a href="/doctor-dashboard">Dashboard</a>
+        <a href="/logout">Logout</a>
+    </div>
+</div>
+
+<div class="container">
+    <h2>Medical History</h2>
+    {% if history %}
+    <table>
+        <tr>
+            <th>Date</th><th>Conditions</th><th>Surgeries</th><th>Medication</th><th>Doctor</th>
+        </tr>
+        {% for h in history %}
+        <tr>
+            <td>{{ h.date }}</td>
+            <td>{{ h.conditions }}</td>
+            <td>{{ h.surgeries }}</td>
+            <td>{{ h.medication }}</td>
+            <td>{{ h.doctor_name }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+    {% else %}
+        <p>No medical history found.</p>
+    {% endif %}
+</div>
+</body>
+</html>
